@@ -1,0 +1,101 @@
+server:
+  port: 8080
+
+spring:
+  profiles:
+    active: dev
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  jackson:
+    date-format: yyyy-mm-dd HH:mm:ss
+    time-zone: GMT+8
+    serialization:
+      write-dates-as-timestamps: false
+  main:
+    allow-circular-references: true
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
+
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: org.sangonomiya.app.entity
+
+jwt:
+  # JWT 存储的请求头
+  tokenHeader: Authorization
+  # JWT 的超时期限时间（60*60*24*7）
+  expiration: 604800
+  # JWT 负载中拿到开头
+  tokenHead: Bearer
+  # JWT 秘钥
+  secret: xxxxxx
+
+sms:
+  # 阿里云短信服务账号accessKeyId
+  accessKeyId: xxxxxx
+  # 阿里云短信服务账号accessKeySecret
+  accessKeySecret: xxxxxx
+  # 短信服务模板名称
+  signName: xxxxxx
+  # 短信模板代号
+  templateCode: xxxxxx
+  # 服务器地域(一般不改)
+  region: cn-xxxxxx
+
+# 支付宝当面付配置
+alipay:
+  # 请求域
+  serverUrl: https://openapi.alipay.com/gateway.do
+  # 应用ID
+  appId: xxxxxx
+  # 应用私钥
+  privateKey: xxxxxx
+  # 支付宝公钥
+  publicKey: xxxxxx
+  # 加密方式
+  encryptKey: RSA2
+  # 订单最大重试创建次数
+  retry: 10
+  # 订单超时时间ms
+  timeout: 30000
+
+# 腾讯云验证码
+tencent:
+  # 服务器URL
+  serverUrl: captcha.tencentcloudapi.com
+  # 子账号ID
+  secretId: xxxxxx
+  # 子账号秘钥
+  secretKey: xxxxxx
+
+# 线程池默认配置
+task:
+  pool:
+    # 核心线程池大小
+    corePoolSize: 5
+    # 最大线程池大小
+    maxPoolSize: 5
+    # 线程存活时间(秒)
+    keepAliveSeconds: 300
+    # 队列大小
+    queueCapacity: 1000
+
+# cloudflare验证
+cloudflare:
+  url: https://challenges.cloudflare.com/turnstile/v0/siteverify
+  secretKey: xxxxxx
+
+# 数据分布后端
+dataAnalysisServer:
+  serverUrl: http://106.14.64.130:7500/api/
+  # 与Django通信的密匙
+  secretKey: xxxxxx
+
+# 高德地图配置
+geo:
+  serverUrl: https://restapi.amap.com/v3/
+  key: xxxxxx

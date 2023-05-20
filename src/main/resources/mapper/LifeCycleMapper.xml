@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.sangonomiya.app.mapper.LifeCycleMapper">
+
+<!--    根据companyId创建生命周期表-->
+    <update id="createLifeCycleTableAction">
+        CREATE TABLE `extra_lifecycle_${companyId}`(
+            `id` INT(10) UNSIGNED NOT NULL ,
+            `raw_material_acquisition_stage` JSON NULL DEFAULT NULL ,
+            `production_stage` JSON NULL DEFAULT NULL ,
+            `packing_stage` JSON NULL DEFAULT NULL ,
+            `sale_stage` JSON NULL DEFAULT NULL ,
+            `use_stage` JSON NULL DEFAULT NULL ,
+            `disuse_stage` JSON NULL DEFAULT NULL ,
+            PRIMARY KEY (`id`)) ENGINE = InnoDB
+    </update>
+<!--    根据companyId删除生命周期表-->
+    <update id="dropLifeCycleTableAction">
+        DROP TABLE `extra_lifecycle_${companyId}`
+    </update>
+
+<!--    插入生命周期-->
+    <insert id="insertLifeCycle">
+        INSERT INTO `extra_lifecycle_${companyId}` (`id`, `raw_material_acquisition_stage`,
+        `production_stage`, `packing_stage`, `sale_stage`, `use_stage`, `disuse_stage`)
+        VALUES (#{lifeCycle.id}, #{lifeCycle.rawMaterialAcquisitionStage},
+        #{lifeCycle.productionStage}, #{lifeCycle.packingStage}, #{lifeCycle.saleStage},
+        #{lifeCycle.useStage}, #{lifeCycle.disuseStage});
+    </insert>
+<!--    删除生命周期数据-->
+    <delete id="deleteLifeCycleById">
+        DELETE FROM `extra_lifecycle_${companyId}` WHERE `extra_lifecycle_${companyId}`.`id` = ${lifeCycleId}
+    </delete>
+<!--    查询生命周期数据-->
+    <select id="selectLifeCycleById" resultType="org.sangonomiya.app.entity.LifeCycle">
+        SELECT * FROM `extra_lifecycle_${companyId}` WHERE `extra_lifecycle_${companyId}`.`id` = ${lifeCycleId} LIMIT 1
+    </select>
+<!--    更新生命周期数据-->
+    <update id="updateById">
+        UPDATE `extra_lifecycle_${companyId}`
+        SET `raw_material_acquisition_stage` = #{lifeCycle.rawMaterialAcquisitionStage},
+            `production_stage` = #{lifeCycle.productionStage},
+            `packing_stage` = #{lifeCycle.packingStage}, `sale_stage` = #{lifeCycle.saleStage},
+            `use_stage` = #{lifeCycle.useStage}, `disuse_stage` = #{lifeCycle.disuseStage}
+        WHERE `extra_lifecycle_${companyId}`.`id` = ${lifeCycleId};
+    </update>
+<!--    根据companyId检查对应的生命周期表是否存在-->
+    <select id="checkTableExists" resultType="java.util.Map">
+        show tables like "extra_lifecycle_${companyId}"
+    </select>
+
+
+</mapper>

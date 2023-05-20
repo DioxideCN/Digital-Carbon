@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.sangonomiya.app.mapper.ServiceFormMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="org.sangonomiya.app.entity.ServiceForm">
+        <id column="id" property="id" />
+        <result column="company_name" property="companyName" />
+        <result column="industry_type" property="industryType" />
+        <result column="region_location" property="regionLocation" />
+        <result column="company_needs" property="companyNeeds" />
+        <result column="post_timestamp" property="postTimestamp" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, company_name, industry_type, region_location, company_needs, post_timestamp
+    </sql>
+
+</mapper>

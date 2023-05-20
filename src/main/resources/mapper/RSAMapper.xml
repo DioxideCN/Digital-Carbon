@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.sangonomiya.app.mapper.RSAMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="org.sangonomiya.app.entity.RSAObject">
+        <result column="company_id" property="companyId" />
+        <result column="title" property="title" />
+        <result column="img_id" property="imgId" />
+        <result column="app_id" property="appId" />
+        <result column="app_public_key" property="appPublicKey" />
+        <result column="com_public_key" property="comPublicKey" />
+        <result column="com_private_key" property="comPrivateKey" />
+        <result column="remark" property="remark" />
+        <result column="notify_url" property="notifyUrl" />
+        <result column="enable" property="enable" />
+        <result column="create_time" property="createTime" />
+        <result column="ability_id" property="abilityId" />
+        <result column="binding_product_id" property="bindingProductId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        company_id, title, img_id, app_id, app_public_key, com_public_key, com_private_key, remark, notify_url, enable, create_time, ability_id, binding_product_id
+    </sql>
+
+</mapper>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.sangonomiya.app.mapper.ProductMapper">
+
+<!--    根据companyId创建相应公司的产品表-->
+    <update id="createProductTableAction">
+        CREATE TABLE `extra_product_${companyId}`(
+        `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,
+        `name` VARCHAR(255) NOT NULL ,
+        `type` VARCHAR(255) NULL DEFAULT NULL ,
+        `model` VARCHAR(255) NULL DEFAULT NULL ,
+        `amount` INT NULL DEFAULT NULL ,
+        `unit` VARCHAR(255) NULL DEFAULT NULL ,
+        `weight` FLOAT(11) NULL DEFAULT NULL,
+        `life_cycle_type` BOOLEAN NULL DEFAULT NULL ,
+        `pic` VARCHAR(255) NULL DEFAULT NULL ,
+        `statistics_period_before` DATE NULL DEFAULT NULL ,
+        `statistics_period_after` DATE NULL DEFAULT NULL ,
+        `tag` VARCHAR(255) NULL DEFAULT NULL,
+        PRIMARY KEY (`id`)) ENGINE = InnoDB
+    </update>
+<!--    根据companyId删除对应的公司表-->
+    <update id="dropProductTableAction">
+        DROP TABLE `extra_product_${companyId}`
+    </update>
+<!--    插入产品请求-->
+    <insert id="insertProduct" keyProperty="id" useGeneratedKeys="true">
+        INSERT INTO `extra_product_${companyId}` (`name`, `type`, `model`, `amount`, `unit`, `weight`, `life_cycle_type`, `pic`, `statistics_period_before`, `statistics_period_after`, `tag`)
+        VALUES (#{product.name}, #{product.type}, #{product.model}, #{product.amount}, #{product.unit}, #{product.weight}, #{product.lifeCycleType}, #{product.pic}, #{product.statisticsPeriodBefore}, #{product.statisticsPeriodAfter}, #{product.tag});
+
+        <selectKey keyColumn="id" keyProperty="product.id" resultType="int" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+<!--    通过产品Id删除产品数据-->
+    <delete id="deleteProductById">
+        DELETE FROM `extra_product_${companyId}` WHERE `extra_product_${companyId}`.`id` = ${productId}
+    </delete>
+<!--    获取产品列表请求-->
+    <select id="selectProductPage" resultType="org.sangonomiya.app.entity.Product">
+        SELECT * FROM `extra_product_${companyId}` ${ew.customSqlSegment}
+    </select>
+<!--    根据产品id获取产品数据-->
+    <select id="selectProductById" resultType="org.sangonomiya.app.entity.Product">
+        SELECT * FROM `extra_product_${companyId}` WHERE `extra_product_${companyId}`.`id` = ${productId} LIMIT 1
+    </select>
+<!--    通过产品id来更新产品数据-->
+    <update id="updateById">
+        UPDATE `extra_product_${companyId}`
+        SET `name` = #{product.name},`type` = #{product.type}, `model` = #{product.model}, `amount` = #{product.amount}, `unit` = #{product.unit}, `weight` = #{product.weight}, `life_cycle_type` = #{product.lifeCycleType}, `pic` = #{product.pic}, `statistics_period_before` = #{product.statisticsPeriodBefore}, `statistics_period_after` = #{product.statisticsPeriodAfter}, `tag` = #{product.tag}
+        WHERE `extra_product_${companyId}`.`id` = ${productId};
+    </update>
+<!--    通过companyId检查表格是否存在-->
+    <select id="checkTableExists" resultType="java.util.Map">
+        show tables like "extra_product_${companyId}"
+    </select>
+
+
+
+</mapper>

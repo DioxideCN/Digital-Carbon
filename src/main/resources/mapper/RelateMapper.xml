@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.sangonomiya.app.mapper.RelateMapper">
+
+    <resultMap id="CompanyUser" type="java.util.Map">
+        <id column="id" property="id" />
+        <result column="portrait" property="portrait" />
+        <result column="username" property="username" />
+        <result column="realname" property="realname" />
+        <result column="email" property="email" />
+        <result column="gender" property="gender" />
+        <result column="password" property="password" />
+        <result column="phone" property="phone" />
+        <result column="city" property="city" />
+        <result column="enable" property="enable" />
+        <result column="create_time" property="createTime" />
+        <result column="group_id" property="groupId" />
+        <result column="group_name" property="groupName" />
+    </resultMap>
+
+    <resultMap id="User" type="org.sangonomiya.app.entity.UserVO">
+        <id column="id" property="id" />
+        <result column="portrait" property="portrait" />
+        <result column="username" property="username" />
+        <result column="realname" property="realname" />
+        <result column="email" property="email" />
+        <result column="gender" property="gender" />
+        <result column="password" property="password" />
+        <result column="phone" property="phone" />
+        <result column="city" property="city" />
+        <result column="enable" property="enable" />
+        <result column="create_time" property="createTime" />
+    </resultMap>
+
+    <resultMap id="Permission" type="org.sangonomiya.app.entity.Permission">
+        <id column="id" property="id" />
+        <result column="group_name" property="groupName" />
+        <result column="permissions" property="permissions" />
+        <result column="remark" property="remark" />
+        <result column="create_time" property="createTime" />
+        <result column="create_user_id" property="createUserId" />
+    </resultMap>
+
+    <resultMap id="Company" type="org.sangonomiya.app.entity.Company">
+        <id column="id" property="id" />
+        <result column="company_name" property="companyName" />
+        <result column="company_user_num" property="companyUserNum" />
+        <result column="company_location" property="companyLocation" />
+        <result column="company_create_time" property="companyCreateTime" />
+        <result column="company_industry_type" property="companyIndustryType" />
+    </resultMap>
+
+    <resultMap id="ServiceForm" type="org.sangonomiya.app.entity.ServiceForm">
+        <id column="id" property="id" />
+        <result column="company_name" property="companyName" />
+        <result column="industry_type" property="industryType" />
+        <result column="region_location" property="regionLocation" />
+        <result column="company_needs" property="companyNeeds" />
+        <result column="post_timestamp" property="postTimestamp" />
+    </resultMap>
+
+    <resultMap id="Payment" type="org.sangonomiya.app.entity.Payment">
+        <id column="id" property="id" />
+        <result column="ending_date" property="endingDate" />
+        <result column="hold_user_id" property="holdUserId" />
+    </resultMap>
+
+    <resultMap id="Order" type="org.sangonomiya.app.entity.Order">
+        <result column="user_id" property="userId" />
+        <result column="order_num" property="orderNum" />
+        <result column="create_time" property="createTime" />
+        <result column="biz_state" property="bizState" />
+        <result column="buy_year" property="buyYear" />
+    </resultMap>
+
+    <resultMap id="Department" type="org.sangonomiya.app.entity.Department">
+        <id column="id" property="id" />
+        <result column="department_name" property="departmentName" />
+        <result column="children_id" property="children" typeHandler="org.sangonomiya.app.core.ListHandler" />
+        <result column="parent_id" property="parent" />
+        <result column="creator_id" property="creator" />
+        <result column="manager_id" property="manager" />
+        <result column="create_time" property="createTime" />
+    </resultMap>
+
+    <resultMap id="Approval" type="org.sangonomiya.app.entity.Approval">
+        <id column="id" property="id" />
+        <result column="title" property="title" />
+        <result column="emergency_level" property="emergencyLevel" />
+        <result column="content" property="content" />
+        <result column="state" property="state" />
+        <result column="create_time" property="createTime" />
+    </resultMap>
+
+    <resultMap id="CompanyApproval" type="java.util.Map">
+        <id column="id" property="id" />
+        <result column="title" property="title" />
+        <result column="emergency_level" property="emergencyLevel" />
+        <result column="content" property="content" />
+        <result column="state" property="state" />
+        <result column="create_time" property="createTime" />
+        <result column="create_user" property="createUser" />
+    </resultMap>
+
+    <!-- 查询用户所在的权限组 -->
+    <select id="getUserPermissionGroup" resultMap="Permission">
+        SELECT
+            repo_permission_group.*
+        FROM
+            `relate_user_permission`
+                INNER JOIN `repo_permission_group` ON relate_user_permission.permission_group_id = repo_permission_group.id
+        WHERE
+            relate_user_permission.user_id = #{user_id}
+    </select>
+
+    <!-- 查询权限组所属的公司 -->
+    <select id="getPermissionFromWhichCompany" resultMap="Company">
+        SELECT
+            repo_company.*
+        FROM
+            `relate_company_permission`
+                INNER JOIN `repo_company` ON relate_company_permission.company_id = repo_company.id
+        WHERE
+            relate_company_permission.permission_group_id = #{permission_id}
+    </select>
+
+    <select id="selectAllOperatorFromCompany" resultMap="User">
+        SELECT ru.*
+        from relate_user_company ruc
+                 inner join repo_user ru on ruc.user_id = ru.id
+                 inner join relate_user_permission rup on ru.id = rup.user_id and rup.permission_group_id = 1
+        where ruc.company_id = #{company_id}
+    </select>
+
+    <select id="selectUserAllApproval" resultMap="Approval">
+        select ra.*
+        from relate_approval_company_user racu
+                 inner join repo_approval ra on racu.approval_id = ra.id
+                 inner join repo_user ru on racu.user_id = ru.id
+                 inner join repo_company rc on racu.company_id = rc.id
+        where ru.id = #{user_id}
+        order by ra.create_time desc
+    </select>
+
+    <select id="selectCompanyAllApproval" resultMap="CompanyApproval">
+        select ra.*, racu.user_id create_user
+        from relate_approval_company_user racu
+                 inner join repo_approval ra on racu.approval_id = ra.id
+                 inner join repo_user ru on racu.user_id = ru.id
+                 inner join repo_company rc on racu.company_id = rc.id
+        where rc.id = #{company_id}
+        order by ra.create_time desc
+    </select>
+
+    <select id="countUserAllApproval" resultType="java.lang.Integer">
+        SELECT
+            COUNT(*)
+        from relate_approval_company_user racu
+                 inner join repo_approval ra on racu.approval_id = ra.id
+                 inner join repo_user ru on racu.user_id = ru.id
+                 inner join repo_company rc on racu.company_id = rc.id
+        where ru.id = #{user_id}
+    </select>
+
+    <select id="countCompanyAllApproval" resultType="java.lang.Integer">
+        SELECT
+            COUNT(*)
+        from relate_approval_company_user racu
+                 inner join repo_approval ra on racu.approval_id = ra.id
+                 inner join repo_user ru on racu.user_id = ru.id
+                 inner join repo_company rc on racu.company_id = rc.id
+        where rc.id = #{company_id}
+    </select>
+
+    <!-- 事务: 将用户与企业双向绑定 -->
+    <insert id="doRelateCompanyToUserAction">
+        INSERT INTO `relate_user_company` (user_id, company_id)
+        VALUES
+            (#{user_id}, #{company_id})
+    </insert>
+
+    <!-- 事务: 将企业与权限组双向绑定 -->
+    <insert id="doRelatePermissionToCompanyAction">
+        INSERT INTO `relate_company_permission` (company_id, permission_group_id)
+        VALUES
+            (#{company_id}, #{permission_group_id})
+    </insert>
+
+    <!-- 事务: 将用户与权限组双向绑定 -->
+    <insert id="doRelatePermissionToUserAction">
+        INSERT INTO `relate_user_permission` (user_id, permission_group_id)
+        VALUES
+            (#{user_id}, #{permission_group_id})
+    </insert>
+
+    <!-- 事务: 将审批表与用户、企业绑定 -->
+    <insert id="doRelateApprovalToUserAndCompanyAction">
+        INSERT INTO `relate_approval_company_user` (approval_id, company_id, user_id)
+        VALUES
+            (#{approval_id}, #{company_id}, #{user_id})
+    </insert>
+
+    <update id="updateUserWithPermissionGroup">
+        UPDATE `relate_user_permission`
+        SET permission_group_id = #{permission_group_id}
+        WHERE user_id = #{user_id}
+    </update>
+
+    <!-- 将需求表与用户相关联 -->
+    <insert id="doRelateServiceFormToUserAction">
+        INSERT INTO `relate_user_company` (form_id, user_id)
+        VALUES
+            (#{form_id}, #{user_id})
+    </insert>
+
+    <!-- 联查user所属的企业 -->
+    <select id="getUserFromWhichCompany" resultMap="Company">
+        SELECT
+            repo_company.*
+        FROM
+            `relate_user_company`
+                INNER JOIN `repo_company` ON relate_user_company.company_id = repo_company.id
+        WHERE
+            relate_user_company.user_id = #{user_id}
+    </select>
+
+    <!-- 联查user提交的申请表 -->
+    <select id="getUserSubmittedServiceForm" resultMap="ServiceForm">
+        SELECT
+            repo_service_form.*
+        FROM
+            `relate_user_form`
+                INNER JOIN `repo_service_form` ON relate_user_form.form_id = repo_service_form.id
+        WHERE
+            relate_user_form.user_id = #{user_id}
+    </select>
+
+    <!-- 查询Order订单记录和用户的联系 -->
+    <select id="queryUserAllOrder" resultMap="Order">
+        SELECT
+            repo_order_record.*
+        FROM
+            `repo_order_record`
+                INNER JOIN `repo_user` ON repo_order_record.user_id = repo_user.id
+        WHERE
+            repo_order_record.user_id = #{user_id}
+    </select>
+
+    <!-- 查询user_id名下是否已有企业账户 -->
+    <select id="findUserWhoHoldCompanyAccount" resultMap="Payment">
+        SELECT
+            repo_payment.*
+        FROM
+            `repo_payment`
+                INNER JOIN `repo_user` ON repo_payment.hold_user_id = repo_user.id
+        WHERE
+            repo_user.id = #{user_id}
+    </select>
+
+    <!-- 查询company_id下的所有企业员工 -->
+    <select id="getCompanyAllMember" resultMap="CompanyUser">
+        SELECT
+            repo_user.username,
+            repo_user.realname,
+            repo_user.city,
+            repo_user.phone,
+            repo_user.email,
+            repo_permission_group.id AS permission_group_id,
+            repo_permission_group.group_name
+        FROM
+            `relate_user_company`
+                INNER JOIN `repo_company` ON relate_user_company.company_id = repo_company.id
+                INNER JOIN `repo_user` ON repo_user.id = relate_user_company.user_id
+                INNER JOIN `relate_user_permission` ON repo_user.id = relate_user_permission.user_id
+                INNER JOIN `repo_permission_group` ON repo_permission_group.id = relate_user_permission.permission_group_id
+        WHERE
+            relate_user_company.company_id = #{company_id}
+    </select>
+
+    <!-- 查询company_id下的所有企业员工 -->
+    <select id="getCompanyMemberByGroup" resultType="java.lang.Integer">
+        SELECT
+            repo_user.id
+        FROM
+            `relate_user_company`
+                INNER JOIN `repo_company` ON relate_user_company.company_id = repo_company.id
+                INNER JOIN `repo_user` ON repo_user.id = relate_user_company.user_id
+                INNER JOIN `relate_user_permission` ON repo_user.id = relate_user_permission.user_id
+                INNER JOIN `repo_permission_group` ON repo_permission_group.id = relate_user_permission.permission_group_id
+        WHERE
+            relate_user_company.company_id = #{company_id}
+            AND relate_user_permission.permission_group_id = #{group_id}
+    </select>
+
+    <!-- 查询company_id下的所有企业员工 -->
+    <select id="countCompanyAllMember" resultType="java.lang.Integer">
+        SELECT
+            COUNT(*)
+        FROM
+            `relate_user_company`
+                INNER JOIN `repo_company` ON relate_user_company.company_id = repo_company.id
+                INNER JOIN `repo_user` ON repo_user.id = relate_user_company.user_id
+                INNER JOIN `relate_user_permission` ON repo_user.id = relate_user_permission.user_id
+                INNER JOIN `repo_permission_group` ON repo_permission_group.id = relate_user_permission.permission_group_id
+        WHERE
+            relate_user_company.company_id = #{company_id}
+    </select>
+
+    <!-- 查询company_id下的所有权限组 -->
+    <select id="getCompanyAllGroup" resultMap="Permission">
+        SELECT
+            repo_permission_group.*
+        FROM
+            `relate_company_permission`
+                INNER JOIN `repo_permission_group` ON relate_company_permission.permission_group_id = repo_permission_group.id
+                INNER JOIN `repo_company` ON relate_company_permission.company_id = repo_company.id
+        WHERE
+            relate_company_permission.company_id = #{company_id}
+    </select>
+
+    <!-- 查询company_id下的所有权限组 -->
+    <select id="countCompanyAllGroup" resultType="java.lang.Integer">
+        SELECT
+            COUNT(*)
+        FROM
+            `relate_company_permission`
+                INNER JOIN `repo_permission_group` ON relate_company_permission.permission_group_id = repo_permission_group.id
+                INNER JOIN `repo_company` ON relate_company_permission.company_id = repo_company.id
+        WHERE
+            relate_company_permission.company_id = #{company_id}
+    </select>
+
+    <!-- 解除用户和权限组的绑定 -->
+    <delete id="deleteUserGroupRelation">
+        DELETE FROM `relate_user_permission`
+        WHERE user_id = #{user_id}
+    </delete>
+
+    <!-- 解除用户和企业的绑定 -->
+    <delete id="deleteUserCompanyRelation">
+        DELETE FROM `relate_user_company`
+        WHERE user_id = #{user_id}
+    </delete>
+
+    <!-- 解除权限组和企业的绑定 -->
+    <delete id="deleteGroupCompanyRelation">
+        DELETE FROM `relate_company_permission`
+        WHERE permission_group_id = #{permission_group_id}
+    </delete>
+
+    <select id="findDepartmentByCompany" resultMap="Department">
+        SELECT
+            repo_department.*
+        FROM
+            `relate_company_department`
+                INNER JOIN `repo_company` ON relate_company_department.company_id = repo_company.id
+                INNER JOIN `repo_department` ON relate_company_department.department_id = repo_department.id
+        WHERE
+            repo_department.department_name = #{department_name}
+            AND repo_company.id = #{company_id}
+    </select>
+
+    <select id="findCompanyAllDepartment" resultMap="Department">
+        SELECT
+            repo_department.*
+        FROM
+            `relate_company_department`
+                INNER JOIN `repo_company` ON relate_company_department.company_id = repo_company.id
+                INNER JOIN `repo_department` ON relate_company_department.department_id = repo_department.id
+        WHERE
+            repo_company.id = #{company_id}
+    </select>
+
+    <insert id="doRelateDepartmentToCompanyAction">
+        INSERT INTO `relate_company_department` (department_id, company_id)
+        VALUES
+            (#{department_id}, #{company_id})
+    </insert>
+
+    <!-- 解除部门和企业的绑定 -->
+    <delete id="deleteDepartmentCompanyRelation">
+        DELETE FROM `relate_company_department`
+        WHERE department_id = #{department_id}
+    </delete>
+
+</mapper>

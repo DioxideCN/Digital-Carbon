@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.sangonomiya.app.mapper.CompanyMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="org.sangonomiya.app.entity.Company">
+        <id column="id" property="id" />
+        <result column="company_name" property="companyName" />
+        <result column="company_user_num" property="companyUserNum" />
+        <result column="company_location" property="companyLocation" />
+        <result column="company_create_time" property="companyCreateTime" />
+        <result column="company_industry_type" property="companyIndustryType" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, company_name, company_user_num, company_location, company_create_time, company_industry_type
+    </sql>
+
+    <!-- 事务A:新建公司数据事务并返回主键ID -->
+    <insert id="doRegisterCompanyAction" parameterType="org.sangonomiya.app.entity.Company" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO `repo_company`
+            (company_name, company_user_num, company_location, company_create_time, company_industry_type)
+        VALUES
+            (#{companyName}, 1, #{companyLocation}, #{companyCreateTime}, #{companyIndustryType})
+    </insert>
+
+</mapper>

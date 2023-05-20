@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.sangonomiya.app.mapper.GenerateMapper">
+
+    <update id="generateCurrentTable">
+        CREATE TABLE IF NOT EXISTS `statistic_${year}_${month}`(
+            `company_id` int NOT NULL,
+            `app_id` varchar(255) NOT NULL,
+            `product_id` int NOT NULL,
+            `1` double UNSIGNED NOT NULL DEFAULT 0,
+            `2` double UNSIGNED NOT NULL DEFAULT 0,
+            `3` double UNSIGNED NOT NULL DEFAULT 0,
+            `4` double UNSIGNED NOT NULL DEFAULT 0,
+            `5` double UNSIGNED NOT NULL DEFAULT 0,
+            `6` double UNSIGNED NOT NULL DEFAULT 0,
+            `7` double UNSIGNED NOT NULL DEFAULT 0,
+            `8` double UNSIGNED NOT NULL DEFAULT 0,
+            `9` double UNSIGNED NOT NULL DEFAULT 0,
+            `10` double UNSIGNED NOT NULL DEFAULT 0,
+            `11` double UNSIGNED NOT NULL DEFAULT 0,
+            `12` double UNSIGNED NOT NULL DEFAULT 0,
+            `13` double UNSIGNED NOT NULL DEFAULT 0,
+            `14` double UNSIGNED NOT NULL DEFAULT 0,
+            `15` double UNSIGNED NOT NULL DEFAULT 0,
+            `16` double UNSIGNED NOT NULL DEFAULT 0,
+            `17` double UNSIGNED NOT NULL DEFAULT 0,
+            `18` double UNSIGNED NOT NULL DEFAULT 0,
+            `19` double UNSIGNED NOT NULL DEFAULT 0,
+            `20` double UNSIGNED NOT NULL DEFAULT 0,
+            `21` double UNSIGNED NOT NULL DEFAULT 0,
+            `22` double UNSIGNED NOT NULL DEFAULT 0,
+            `23` double UNSIGNED NOT NULL DEFAULT 0,
+            `24` double UNSIGNED NOT NULL DEFAULT 0,
+            `25` double UNSIGNED NOT NULL DEFAULT 0,
+            `26` double UNSIGNED NOT NULL DEFAULT 0,
+            `27` double UNSIGNED NOT NULL DEFAULT 0,
+            `28` double UNSIGNED NOT NULL DEFAULT 0,
+            `29` double UNSIGNED NOT NULL DEFAULT 0,
+            `30` double UNSIGNED NOT NULL DEFAULT 0,
+            `31` double UNSIGNED NOT NULL DEFAULT 0
+            ) ENGINE = InnoDB
+    </update>
+
+    <select id="getDataStatistic" resultType="map">
+        SELECT tb.1,tb.2,tb.3,tb.4,tb.5,tb.6,tb.7,tb.8,tb.9,tb.10,tb.11,tb.12,tb.13,tb.14,tb.15,tb.16,tb.17,tb.18,tb.19,tb.20,tb.21,tb.22,tb.23,tb.24,tb.25,tb.26,tb.27,tb.28,tb.29,tb.30,tb.31
+        FROM statistic_${year}_${month} tb
+        WHERE tb.company_id = #{company_id}
+            AND tb.app_id = #{app_id}
+            AND tb.product_id = #{product_id}
+    </select>
+
+    <update id="updateDataStatistic">
+        UPDATE statistic_${year}_${month} tb
+        SET tb.${day} = tb.${day} + #{new_data}
+        WHERE tb.company_id = #{company_id}
+          AND tb.app_id = #{app_id}
+    </update>
+
+
+
+</mapper>

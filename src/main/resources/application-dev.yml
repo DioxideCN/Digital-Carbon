@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/digital_carbon?useUnicode=true&useSSL=true&characterEncoding=utf8
+    username: root
+    password: 123456
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    database: 0
+    password: 123456
+    timeout: 10s
+    lettuce:
+      pool:
+        min-idle: 0
+        max-idle: 8
+        max-active: 8
+        max-wait: -1ms
